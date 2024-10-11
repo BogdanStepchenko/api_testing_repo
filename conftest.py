@@ -3,8 +3,10 @@ import requests
 
 from data.constants import BASE_URL_AUTHORIZE, HEADERS
 from data.randomizer import get_random_string
+
 from endpoints.post_token import PostToken
 from endpoints.get_token import GetToken
+from endpoints.get_all_meme import GetAllMemes
 
 
 @pytest.fixture(scope='function')
@@ -33,6 +35,11 @@ def get_token_endpoint():
 
 
 @pytest.fixture(scope='function')
+def get_all_memes(get_authorized_headers):
+    return GetAllMemes(get_authorized_headers)
+
+
+@pytest.fixture(scope='function')
 def token(create_new_token):
     token, name = create_new_token
     return token
@@ -45,6 +52,6 @@ def name(create_new_token):
 
 
 @pytest.fixture(scope='function')
-def get_authorized_headers(create_new_token):
-    token, name = create_new_token
-    return {**HEADERS, 'Authorization': token}
+def get_authorized_headers(token):
+    headers = {**HEADERS, 'Authorization': token}
+    return headers
