@@ -33,7 +33,7 @@ class TestTokenCreation:
         post_token_endpoint.check_is_token_in_response()
         post_token_endpoint.check_is_name_in_response()
 
-    @pytest.mark.parametrize("name", 'hello')
+    @pytest.mark.parametrize("name", ['hello'])
     def test_create_token_with_the_same_name(self, post_token_endpoint, name):
         post_token_endpoint.create_new_token(name)
         post_token_endpoint.check_status_code(200)
