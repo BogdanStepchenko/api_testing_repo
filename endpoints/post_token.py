@@ -1,26 +1,20 @@
 import requests
-from data.constants import BASE_URL, HEADERS
+from endpoints.basic_class import BasicClass
+from data.constants import BASE_URL_AUTHORIZE, HEADERS
 
 
-class PostToken:
+class PostToken(BasicClass):
 
     def __init__(self):
+        super().__init__()
         self.creation_response = None
         self.created_object = None
-        self.response = None
-
-    def check_status_code(self, code):
-        if self.response is None:
-            raise ValueError("Response is None. Can not check status code.")
-
-        if self.response.status_code != code:
-            raise ValueError(f"Expected status code {code}, but we got {self.response.status_code}.")
 
     def create_new_token(self, name):
         payload = {
             'name': name
         }
-        self.creation_response = requests.post(f'{BASE_URL}/authorize', json=payload, headers=HEADERS)
+        self.creation_response = requests.post(BASE_URL_AUTHORIZE, json=payload, headers=HEADERS)
         self.response = self.creation_response
         if self.response.status_code == 200:
             try:
