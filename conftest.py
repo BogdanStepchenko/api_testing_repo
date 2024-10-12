@@ -1,13 +1,14 @@
 import pytest
 import requests
 
-from data.constants import BASE_URL_AUTHORIZE, HEADERS
+from data.constants import BASE_URL_AUTHORIZE, BASE_URL_MEME, HEADERS, CORRECT_PAYLOAD
 from data.randomizer import get_random_string
 
 from endpoints.post_token import PostToken
 from endpoints.get_token import GetToken
 from endpoints.get_all_meme import GetAllMemes
 from endpoints.get_exact_meme import GetExactMeme
+from endpoints.post_new_meme import PostMeme
 
 
 @pytest.fixture(scope='function')
@@ -23,6 +24,18 @@ def create_new_token():
     token = created_object['token']
     assert 'token' in created_object
     return token, name
+
+
+@pytest.fixture(scope='function')
+def create_new_meme(authorized_headers):
+    payload = CORRECT_PAYLOAD
+    creation_response = requests.post(BASE_URL_MEME, json=payload, headers=authorized_headers)
+    assert creation_response.status_code == 200, f'Status code is incorrect! {creation_response.status_code}'
+    try:
+        created_object = creation_response.json()
+    except requests.exceptions.JSONDecodeError as e:
+        pytest.fail(f"Failed to decode JSON: {e}")
+    return created_object
 
 
 @pytest.fixture(scope='function')
@@ -46,6 +59,11 @@ def get_exact_meme(get_authorized_headers):
 
 
 @pytest.fixture(scope='function')
+def post_new_meme(get_authorized_headers, name):
+    return PostMeme(get_authorized_headers, name)
+
+
+@pytest.fixture(scope='function')
 def token(create_new_token):
     token, name = create_new_token
     return token
@@ -61,3 +79,8 @@ def name(create_new_token):
 def get_authorized_headers(token):
     headers = {**HEADERS, 'Authorization': token}
     return headers
+
+
+@pytest.fixture(scope='function')
+def get_created_meme_id(create_new_meme):
+    return create_new_meme['id']
