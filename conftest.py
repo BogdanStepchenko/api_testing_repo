@@ -7,6 +7,7 @@ from data.randomizer import get_random_string
 from endpoints.post_token import PostToken
 from endpoints.get_token import GetToken
 from endpoints.get_all_meme import GetAllMemes
+from endpoints.get_exact_meme import GetExactMeme
 
 
 @pytest.fixture(scope='function')
@@ -37,6 +38,11 @@ def get_token_endpoint():
 @pytest.fixture(scope='function')
 def get_all_memes(get_authorized_headers):
     return GetAllMemes(get_authorized_headers)
+
+
+@pytest.fixture(scope='function')
+def get_exact_meme(get_authorized_headers):
+    return GetExactMeme(get_authorized_headers)
 
 
 @pytest.fixture(scope='function')
