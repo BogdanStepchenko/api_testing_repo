@@ -1,7 +1,8 @@
 import pytest
 import requests
 
-from data.constants import BASE_URL_AUTHORIZE, BASE_URL_MEME, HEADERS, CORRECT_PAYLOAD
+from data.constants import BASE_URL_AUTHORIZE, BASE_URL_MEME, HEADERS
+from data.payloads_for_meme_creation import CORRECT_PAYLOAD
 from data.randomizer import get_random_string
 
 from endpoints.post_token import PostToken
@@ -9,6 +10,7 @@ from endpoints.get_token import GetToken
 from endpoints.get_all_meme import GetAllMemes
 from endpoints.get_exact_meme import GetExactMeme
 from endpoints.post_new_meme import PostMeme
+from endpoints.put_existed_meme import PutMeme
 
 
 @pytest.fixture(scope='function')
@@ -27,9 +29,9 @@ def create_new_token():
 
 
 @pytest.fixture(scope='function')
-def create_new_meme(authorized_headers):
+def create_new_meme(get_authorized_headers):
     payload = CORRECT_PAYLOAD
-    creation_response = requests.post(BASE_URL_MEME, json=payload, headers=authorized_headers)
+    creation_response = requests.post(BASE_URL_MEME, json=payload, headers=get_authorized_headers)
     assert creation_response.status_code == 200, f'Status code is incorrect! {creation_response.status_code}'
     try:
         created_object = creation_response.json()
@@ -61,6 +63,11 @@ def get_exact_meme(get_authorized_headers):
 @pytest.fixture(scope='function')
 def post_new_meme(get_authorized_headers, name):
     return PostMeme(get_authorized_headers, name)
+
+
+@pytest.fixture(scope='function')
+def put_existed_meme(get_authorized_headers, name):
+    return PutMeme(get_authorized_headers, name)
 
 
 @pytest.fixture(scope='function')
