@@ -9,7 +9,7 @@ CORRECT_PAYLOAD = {
         get_random_string()
     ],
     "text": get_random_string(),
-    "url": get_random_string()
+    "url": "https://" + get_random_string()
 }
 
 PAYLOAD_WITHOUT_INFO = {

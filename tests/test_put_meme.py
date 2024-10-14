@@ -34,3 +34,11 @@ class TestPutMeme:
         incorrect_payload = payload(get_created_meme_id)
         put_existed_meme.update_meme_as_authorized_user_and_id(get_created_meme_id, incorrect_payload)
         put_existed_meme.check_status_code(400)
+
+    def test_update_meme_with_incorrect_token(self, get_created_meme_id, put_existed_meme):
+        invalid_headers = {"Authorization": "Bearer invalid_token"}
+        put_existed_meme.authorized_headers = invalid_headers
+        correct_payload = generate_correct_payload(get_created_meme_id)
+        put_existed_meme.update_meme_as_authorized_user_and_id(get_created_meme_id, correct_payload)
+        put_existed_meme.check_status_code(401)
+

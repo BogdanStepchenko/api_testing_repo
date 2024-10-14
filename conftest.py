@@ -11,6 +11,7 @@ from endpoints.get_all_meme import GetAllMemes
 from endpoints.get_exact_meme import GetExactMeme
 from endpoints.post_new_meme import PostMeme
 from endpoints.put_existed_meme import PutMeme
+from endpoints.delete_meme import DeleteMeme
 
 
 @pytest.fixture(scope='function')
@@ -68,6 +69,11 @@ def post_new_meme(get_authorized_headers, name):
 @pytest.fixture(scope='function')
 def put_existed_meme(get_authorized_headers, name):
     return PutMeme(get_authorized_headers, name)
+
+
+@pytest.fixture(scope='function')
+def delete_meme(get_authorized_headers):
+    return DeleteMeme(get_authorized_headers)
 
 
 @pytest.fixture(scope='function')
