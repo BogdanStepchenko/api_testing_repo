@@ -3,7 +3,6 @@ from json import JSONDecodeError
 import pytest
 import requests
 from pydantic import ValidationError
-
 from endpoints.basic_class import BasicClass
 from data.constants import BASE_URL_MEME, HEADERS
 from models.meme_data import MemeJson

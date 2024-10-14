@@ -2,8 +2,10 @@ import pytest
 import requests
 
 from json import JSONDecodeError
+from pydantic import ValidationError
 from endpoints.basic_class import BasicClass
 from data.constants import BASE_URL_MEME, HEADERS
+from models.meme_data import MemeJson
 
 
 class PutMeme(BasicClass):
@@ -19,6 +21,10 @@ class PutMeme(BasicClass):
         if self.response.status_code == 200:
             try:
                 self.response_json = self.response.json()
+                try:
+                    MemeJson(**self.response_json)
+                except ValidationError as e:
+                    pytest.fail(f"Validation Error: {e}\nResponse: {self.response_json}")
             except JSONDecodeError:
                 pytest.fail("Failed to decode JSON response")
         else:
