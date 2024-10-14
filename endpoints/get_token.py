@@ -13,7 +13,7 @@ class GetToken(BasicClass):
         self.response = requests.get(f"{BASE_URL_AUTHORIZE}/{token}", headers=HEADERS)
         if self.response.status_code == 200:
             self.text_response = self.response.text
-            assert "Token is alive" in self.text_response, 'Token is correct'
+            assert "Token is alive" in self.text_response, 'Token is not alive'
             return True
         else:
             return False, f"Invalid status code: {self.response.status_code}"

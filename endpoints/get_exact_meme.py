@@ -27,8 +27,13 @@ class GetExactMeme(BasicClass):
 
     def check_get_exact_meme_as_authorized_user(self, meme_id):
         self.get_meme_by_id(meme_id, headers=self.authorized_headers)
-        assert self.response_json['id'] == meme_id, f"Expected ID {meme_id}, but got {self.response_json['id']}"
-        assert self.response_json['url'].startswith('http'), 'URL should start with http or https'
+        if self.response_json is not None:
+            assert 'id' in self.response_json, "Response JSON does not contain 'id'"
+            assert self.response_json['id'] == meme_id, f"Expected ID {meme_id}, but got {self.response_json['id']}"
+            assert 'url' in self.response_json, "Response JSON does not contain 'url'"
+            assert self.response_json['url'].startswith('http'), 'URL should start with http or https'
+        else:
+            assert False, "Response JSON is None. Possibly invalid token or no JSON in the response."
 
     def check_meme_fields_in_response(self):
         try:

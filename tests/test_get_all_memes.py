@@ -26,3 +26,9 @@ class TestGetAllMemes:
     def test_get_all_memes_as_unauthorized_user_but_with_authorization_in_headers(self, get_all_memes):
         get_all_memes.check_get_all_memes_with_authorization_but_without_token()
         get_all_memes.check_status_code(401)
+
+    def test_get_all_memes_with_invalid_token(self, get_all_memes):
+        invalid_headers = {"Authorization": "Bearer invalid_token"}
+        get_all_memes.authorized_headers = invalid_headers
+        get_all_memes.check_get_all_memes_as_authorized_user()
+        get_all_memes.check_status_code(401)
