@@ -1,6 +1,3 @@
-import requests
-
-
 class BasicClass:
     def __init__(self):
         self.response = None

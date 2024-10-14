@@ -4,7 +4,6 @@ import requests
 from data.constants import BASE_URL_AUTHORIZE, BASE_URL_MEME, HEADERS
 from data.payloads_for_meme_creation import CORRECT_PAYLOAD
 from data.randomizer import get_random_string
-
 from endpoints.post_token import PostToken
 from endpoints.get_token import GetToken
 from endpoints.get_all_meme import GetAllMemes
