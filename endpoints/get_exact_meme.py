@@ -31,7 +31,11 @@ class GetExactMeme(BasicClass):
 
     def check_get_exact_meme_as_authorized_user(self, meme_id):
         self.get_meme_by_id(meme_id, headers=self.authorized_headers)
-        if self.response_json is not None:
+        if self.response.status_code == 404:
+            assert self.response_json is None, "Expected response JSON to be None for deleted meme."
+            return None
+        if self.response.status_code == 200:
+            assert self.response_json is not None, "Response JSON is None for valid meme ID."
             assert 'id' in self.response_json, "Response JSON does not contain 'id'"
             assert self.response_json['id'] == meme_id, f"Expected ID {meme_id}, but got {self.response_json['id']}"
             assert 'url' in self.response_json, "Response JSON does not contain 'url'"

@@ -37,3 +37,8 @@ class PostToken(BasicClass):
     def check_is_name_in_response(self):
         assert self.created_object is not None, "Created object is None, token creation failed"
         assert 'user' in self.created_object, "Response does not contain 'token'"
+
+    def get_token_from_response(self):
+        assert self.created_object is not None, "Created object is None, token creation failed"
+        assert 'token' in self.created_object, "Response does not contain 'token'"
+        return self.created_object['token']
