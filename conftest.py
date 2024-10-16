@@ -14,30 +14,31 @@ from endpoints.delete_meme import DeleteMeme
 
 
 @pytest.fixture(scope='function')
-def create_new_token():
+def create_new_token(post_token_endpoint):
     name = get_random_string()
-    payload = {'name': name}
-    creation_response = requests.post(BASE_URL_AUTHORIZE, json=payload, headers=HEADERS)
-    assert creation_response.status_code == 200
-    try:
-        created_object = creation_response.json()
-    except requests.exceptions.JSONDecodeError as e:
-        pytest.fail(f"Failed to decode JSON: {e}")
-    token = created_object['token']
-    assert 'token' in created_object
+    post_token_endpoint.create_new_token(name)
+    post_token_endpoint.check_status_code(200)
+    token = post_token_endpoint.get_token_from_response()
     return token, name
 
 
 @pytest.fixture(scope='function')
-def create_new_meme(get_authorized_headers):
+def create_new_meme_without_deletion(get_authorized_headers, post_new_meme, delete_meme):
     payload = CORRECT_PAYLOAD
-    creation_response = requests.post(BASE_URL_MEME, json=payload, headers=get_authorized_headers)
-    assert creation_response.status_code == 200, f'Status code is incorrect! {creation_response.status_code}'
-    try:
-        created_object = creation_response.json()
-    except requests.exceptions.JSONDecodeError as e:
-        pytest.fail(f"Failed to decode JSON: {e}")
-    return created_object
+    post_new_meme.post_new_meme_as_authorized_user(payload)
+    new_meme = post_new_meme.response_json
+    return new_meme
+
+
+@pytest.fixture(scope='function')
+def create_new_meme(get_authorized_headers, post_new_meme, delete_meme):
+    payload = CORRECT_PAYLOAD
+    post_new_meme.post_new_meme_as_authorized_user(payload)
+    new_meme = post_new_meme.response_json
+    yield new_meme
+    meme_id = new_meme['id']
+    delete_meme.delete_existed_meme_as_authorized_user(meme_id)
+    delete_meme.check_status_code(200)
 
 
 @pytest.fixture(scope='function')
