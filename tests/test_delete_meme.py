@@ -15,7 +15,7 @@ class TestDeleteMeme:
         meme_id = create_new_meme_without_deletion["id"]
         delete_meme.delete_existed_meme_as_authorized_user(meme_id)
         delete_meme.check_status_code(200)
-        get_exact_meme.check_get_exact_meme_as_authorized_user(meme_id)
+        get_exact_meme.check_get_exact_meme_as_authorized_user(meme_id, expect_deleted=True)
 
     @allure.story("Unauthorized user tries to delete existed meme")
     @allure.severity(allure.severity_level.NORMAL)

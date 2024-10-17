@@ -3,6 +3,7 @@ import allure
 from data.payloads_for_meme_updation import generate_correct_payload, generate_payload_without_tags,  \
     generate_payload_without_info, generate_payload_without_url, \
     generate_payload_without_text, generate_payload_with_incorrect_id
+from data.payloads_for_meme_creation import CORRECT_PAYLOAD
 
 
 @allure.epic("Meme Update Feature")
@@ -61,3 +62,22 @@ class TestPutMeme:
             put_existed_meme.update_meme_as_authorized_user_and_id(get_created_meme_id, correct_payload)
         with allure.step("Check status code 401"):
             put_existed_meme.check_status_code(401)
+
+    @allure.story("Attempt to update meme created by another user")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_update_meme_created_by_another_user(self, post_new_meme, put_existed_meme,
+                                                 post_token_endpoint, get_authorized_headers):
+        with allure.step('Authorization as another user'):
+            another_user_token = post_token_endpoint.create_new_token('AnotherUser')['token']
+            another_user_headers = {**get_authorized_headers, 'Authorization': another_user_token}
+            post_new_meme.authorized_headers = another_user_headers
+        with allure.step('Create a new meme as another user'):
+            post_new_meme.post_new_meme_as_authorized_user(CORRECT_PAYLOAD)
+            meme_id = post_new_meme.response_json["id"]
+        with allure.step('Attempt to update meme as main user'):
+            main_user_token = get_authorized_headers['Authorization']
+            put_existed_meme.authorized_headers = {**get_authorized_headers, 'Authorization': main_user_token}
+            correct_payload = generate_correct_payload(meme_id)
+            put_existed_meme.update_meme_as_authorized_user_and_id(meme_id, correct_payload)
+        with allure.step('Check status code 403'):
+            put_existed_meme.check_status_code(403)
