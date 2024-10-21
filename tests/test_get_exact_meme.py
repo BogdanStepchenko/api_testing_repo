@@ -9,17 +9,17 @@ class TestGetExactMeme:
     @allure.severity(allure.severity_level.CRITICAL)
     def test_get_exact_meme_as_authorized_user(self, get_created_meme_id, get_exact_meme):
         with allure.step('Getting exact meme by ID'):
-            get_exact_meme.check_get_exact_meme_as_authorized_user(get_created_meme_id)
+            get_exact_meme.check_all_fields_in_meme_response(get_created_meme_id)
         with allure.step('Checking status code is 200'):
             get_exact_meme.check_status_code(200)
         with allure.step('Checking that all fields in response are correct'):
-            get_exact_meme.check_meme_fields_in_response()
+            get_exact_meme.check_all_fields_in_meme_response(get_created_meme_id)
 
     @allure.story('Check that unauthorized user can not get exact meme')
     @allure.severity(allure.severity_level.NORMAL)
     def test_get_exact_meme_as_unauthorized_user(self, get_exact_meme):
         with allure.step('Check that unauthorized user can not get exact meme by ID'):
-            get_exact_meme.check_get_exact_meme_as_unauthorized_user(1)
+            get_exact_meme.get_meme_by_id(1)
         with allure.step('Checking status code is 401'):
             get_exact_meme.check_status_code(401)
 
@@ -46,6 +46,6 @@ class TestGetExactMeme:
             invalid_headers = {"Authorization": "Bearer invalid_token"}
             get_exact_meme.authorized_headers = invalid_headers
         with allure.step('Check that impossible to get exact meme with incorrect authorization token'):
-            get_exact_meme.check_get_exact_meme_as_authorized_user(get_created_meme_id)
+            get_exact_meme.get_meme_by_id(get_created_meme_id, invalid_headers)
         with allure.step('Checking status code is 401'):
             get_exact_meme.check_status_code(401)

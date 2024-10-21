@@ -8,7 +8,7 @@ class TestGetAllMemes:
     @allure.severity(allure.severity_level.CRITICAL)
     def test_get_all_memes_as_authorized_user(self, get_all_memes):
         with allure.step('Checking that authorized user can get all memes'):
-            get_all_memes.check_get_all_memes_as_authorized_user()
+            get_all_memes.check_get_all_memes_with_valid_token()
         with allure.step('Checking the status code is 200'):
             get_all_memes.check_status_code(200)
 
@@ -24,7 +24,7 @@ class TestGetAllMemes:
     @allure.severity(allure.severity_level.NORMAL)
     def test_all_memes_have_unique_id(self, get_all_memes):
         with allure.step('Getting all memes as an authorized user'):
-            get_all_memes.check_get_all_memes_as_authorized_user()
+            get_all_memes.check_get_all_memes_with_valid_token()
         with allure.step('Checking the status code is 200'):
             get_all_memes.check_status_code(200)
         with allure.step('Verifying that all memes have unique IDs'):
@@ -34,7 +34,7 @@ class TestGetAllMemes:
     @allure.severity(allure.severity_level.NORMAL)
     def test_all_memes_have_required_fields(self, get_all_memes):
         with allure.step('Getting all memes as an authorized user'):
-            get_all_memes.check_get_all_memes_as_authorized_user()
+            get_all_memes.check_get_all_memes_with_valid_token()
         with allure.step('Checking the status code is 200'):
             get_all_memes.check_status_code(200)
         with allure.step('Verifying that all memes have the required fields'):
@@ -60,6 +60,6 @@ class TestGetAllMemes:
             invalid_headers = {"Authorization": "Bearer invalid_token"}
             get_all_memes.authorized_headers = invalid_headers
         with allure.step('Attempt to get memes with invalid token'):
-            get_all_memes.check_get_all_memes_as_authorized_user()
+            get_all_memes.check_get_all_memes_with_invalid_token()
         with allure.step('Checking the status code is 401'):
             get_all_memes.check_status_code(401)
