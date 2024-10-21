@@ -37,7 +37,7 @@ def create_new_meme(get_authorized_headers, post_new_meme, delete_meme):
     new_meme = post_new_meme.response_json
     yield new_meme
     meme_id = new_meme['id']
-    delete_meme.delete_existed_meme_as_authorized_user(meme_id)
+    delete_meme.as_authorized_user(meme_id)
     delete_meme.check_status_code(200)
 
 
@@ -97,3 +97,8 @@ def get_authorized_headers(token):
 @pytest.fixture(scope='function')
 def get_created_meme_id(create_new_meme):
     return create_new_meme['id']
+
+
+@pytest.fixture(scope='function')
+def get_meme_id_without_deletion(create_new_meme_without_deletion):
+    return create_new_meme_without_deletion['id']

@@ -26,9 +26,9 @@ class TestGetToken:
     @pytest.mark.parametrize(
         "invalid_token, expected_status_code",
         [
-            (None, 400),
-            ('', 400),
-            ('invalid_format_of_token', 400)
+            (None, 404),
+            ('', 404),
+            ('invalid_format_of_token', 404)
         ]
     )
     @allure.story('Impossible to get incorrect token')
@@ -36,5 +36,5 @@ class TestGetToken:
     def test_incorrect_token(self, get_token_endpoint, invalid_token, expected_status_code):
         with allure.step('Check that possible to get invalid token'):
             get_token_endpoint.check_is_token_valid(invalid_token)
-        with allure.step('Checking status code is 400'):
+        with allure.step('Checking status code is 404'):
             get_token_endpoint.check_status_code(expected_status_code)

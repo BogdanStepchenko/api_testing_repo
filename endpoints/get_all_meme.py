@@ -10,14 +10,21 @@ class GetAllMemes(BasicClass):
         self.response_json = None
         self.authorized_headers = authorized_headers
 
-    def check_get_all_memes_as_authorized_user(self):
+    def check_get_all_memes_with_valid_token(self):
         self.response = requests.get(BASE_URL_MEME, headers=self.authorized_headers)
-        assert self.response.status_code == 200
+        assert self.response.status_code == 200, f"Expected status code 200, but got {self.response.status_code}"
         self.response_json = self.response.json()
         assert isinstance(self.response_json, dict), 'Expected response is dict'
         assert 'data' in self.response_json, 'Key "data" is expected in response'
         memes = self.response_json['data']
         assert len(memes) > 0, 'Expected at least one meme in list'
+
+    def check_get_all_memes_with_invalid_token(self):
+        self.response = requests.get(BASE_URL_MEME, headers=self.authorized_headers)
+        assert self.response.status_code == 401, f"Expected status code 401, but got {self.response.status_code}"
+        if self.response.text:
+            assert "error" in self.response.text.lower() or "unauthorized" in self.response.text.lower(), \
+                "Expected an error message in response when using an invalid token"
 
     def check_all_memes_have_id_field(self):
         memes = self.response_json['data']

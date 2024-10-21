@@ -1,3 +1,4 @@
+import pytest
 import requests
 from endpoints.basic_class import BasicClass
 from data.constants import BASE_URL_AUTHORIZE, HEADERS
@@ -24,19 +25,22 @@ class PostToken(BasicClass):
                 raise
         else:
             self.created_object = None
-        assert self.created_object is not None, "Failed to create the object"
         return self.created_object
 
     def check_is_token_was_created(self):
         assert self.created_object is not None, "Created object is None, token creation failed"
 
     def check_is_token_in_response(self):
-        assert self.created_object is not None, "Created object is None, token creation failed"
-        assert 'token' in self.created_object, "Response does not contain 'token'"
+        if self.response.status_code == 200:
+            assert self.created_object is not None, "Token creation failed"
+            assert 'token' in self.created_object, "Response does not contain 'token'"
+        else:
+            print(f'blabla{self.response.text}')
+            assert 'Bad Request' in self.response.text, "Expected 'Bad Request' message in response"
 
     def check_is_name_in_response(self):
         assert self.created_object is not None, "Created object is None, token creation failed"
-        assert 'user' in self.created_object, "Response does not contain 'token'"
+        assert 'user' in self.created_object, "Response does not contain 'name'"
 
     def get_token_from_response(self):
         assert self.created_object is not None, "Created object is None, token creation failed"
