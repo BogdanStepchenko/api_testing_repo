@@ -1,3 +1,5 @@
 requests~=2.32.3
 pytest~=8.3.3
 pydantic~=2.9.2
+allure-pytest==2.13.5
+allure-python-commons==2.13.5
