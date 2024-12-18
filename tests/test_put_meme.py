@@ -9,6 +9,7 @@ from data.payloads_for_meme_creation import CORRECT_PAYLOAD
 @allure.epic("Meme Update Feature")
 class TestPutMeme:
 
+    @pytest.mark.fast_smoke
     @allure.story("Update meme with correct payload as authorized user")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_update_meme_with_correct_payload_as_authorized_user(self, get_created_meme_id, put_existed_meme):
@@ -25,6 +26,7 @@ class TestPutMeme:
             put_existed_meme.check_if_url_was_changed_properly(correct_payload)
             put_existed_meme.check_if_name_was_not_changed_properly()
 
+    @pytest.mark.smoke
     @allure.story("Attempt to update meme as unauthorized user")
     @allure.severity(allure.severity_level.NORMAL)
     def test_update_meme_with_correct_payload_as_unauthorized_user(self, get_created_meme_id, put_existed_meme):
@@ -34,6 +36,7 @@ class TestPutMeme:
         with allure.step("Check status code 401"):
             put_existed_meme.check_status_code(401)
 
+    @pytest.mark.smoke
     @allure.story("Test various incorrect payloads for meme update")
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize("payload, description", [
@@ -51,6 +54,7 @@ class TestPutMeme:
         with allure.step("Check status code 400"):
             put_existed_meme.check_status_code(400)
 
+    @pytest.mark.full_test
     @allure.story("Attempt to update meme with invalid token")
     @allure.severity(allure.severity_level.NORMAL)
     def test_update_meme_with_incorrect_token(self, get_created_meme_id, put_existed_meme):
@@ -63,6 +67,7 @@ class TestPutMeme:
         with allure.step("Check status code 401"):
             put_existed_meme.check_status_code(401)
 
+    @pytest.mark.full_test
     @allure.story("Attempt to update meme created by another user")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_update_meme_created_by_another_user(self, post_new_meme, put_existed_meme,

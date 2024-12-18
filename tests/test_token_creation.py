@@ -5,6 +5,7 @@ import allure
 @allure.feature('Token Creation Feature')
 class TestTokenCreation:
 
+    @pytest.mark.fast_smoke
     @allure.story('Creation correct authorization token')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.parametrize(
@@ -27,6 +28,7 @@ class TestTokenCreation:
         with allure.step('Check that status code is 200'):
             post_token_endpoint.check_status_code(200)
 
+    @pytest.mark.smoke
     @allure.story("Create token with incorrect name")
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize(
@@ -44,6 +46,7 @@ class TestTokenCreation:
         with allure.step("Check if token is present in response"):
             post_token_endpoint.check_is_token_in_response()
 
+    @pytest.mark.full_test
     @allure.story("Create token with duplicate name")
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.parametrize("name", ['hello'])

@@ -7,6 +7,7 @@ from data.payloads_for_meme_creation import CORRECT_PAYLOAD
 @allure.feature("Delete Meme Feature")
 class TestDeleteMeme:
 
+    @pytest.mark.fast_smoke
     @allure.story("Authorized user deletes existing meme")
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.step("Delete existed meme as an authorized user")
@@ -17,6 +18,7 @@ class TestDeleteMeme:
         delete_meme.check_status_code(200)
         get_exact_meme.check_if_meme_was_deleted(meme_id)
 
+    @pytest.mark.smoke
     @allure.story("Unauthorized user tries to delete existed meme")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.step("Delete existed meme as an unauthorized user")
@@ -24,6 +26,7 @@ class TestDeleteMeme:
         delete_meme.as_unauthorized_user(get_created_meme_id)
         delete_meme.check_status_code(401)
 
+    @pytest.mark.smoke
     @allure.story("Authorized user deletes non-existed meme")
     @allure.severity(allure.severity_level.MINOR)
     @allure.step("Delete meme with invalid meme ID")
@@ -36,6 +39,7 @@ class TestDeleteMeme:
         delete_meme.as_authorized_user(meme_id)
         delete_meme.check_status_code(404)
 
+    @pytest.mark.full_test
     @allure.story("Check re-deletion of already deleted meme")
     @allure.severity(allure.severity_level.NORMAL)
     @allure.step("Attempt to delete already deleted meme")
@@ -46,6 +50,7 @@ class TestDeleteMeme:
         delete_meme.as_authorized_user(get_meme_id_without_deletion)
         delete_meme.check_status_code(404)
 
+    @pytest.mark.full_test
     @allure.story("Delete meme with invalid authorization token")
     @allure.severity(allure.severity_level.MINOR)
     @allure.step("Attempt to delete a meme with invalid token")
@@ -55,6 +60,7 @@ class TestDeleteMeme:
         delete_meme.as_authorized_user_but_with_incorrect_token(get_meme_id_without_deletion)
         delete_meme.check_status_code(401)
 
+    @pytest.mark.full_test
     @allure.story("Deletion of someone else's meme")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_delete_meme_created_by_another_user(self, delete_meme, post_token_endpoint,
