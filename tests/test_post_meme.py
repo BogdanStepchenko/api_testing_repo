@@ -8,6 +8,7 @@ from data.payloads_for_meme_creation import CORRECT_PAYLOAD, PAYLOAD_WITHOUT_INF
 @allure.feature('Post Meme Feature')
 class TestPostMeme:
 
+    @pytest.mark.fast_smoke
     @allure.story('Post meme as authorized user')
     @allure.severity(allure.severity_level.CRITICAL)
     def test_post_correct_meme_as_authorized_user(self, post_new_meme):
@@ -23,6 +24,7 @@ class TestPostMeme:
         with allure.step('Check that response contains correct usersname'):
             post_new_meme.check_if_correct_username_in_response()
 
+    @pytest.mark.smoke
     @allure.story('Post meme as unauthorized user')
     @allure.severity(allure.severity_level.NORMAL)
     def test_post_correct_meme_as_unauthorized_user(self, post_new_meme):
@@ -31,6 +33,7 @@ class TestPostMeme:
         with allure.step('Checking status code is 401'):
             post_new_meme.check_status_code(401)
 
+    @pytest.mark.full_test
     @pytest.mark.parametrize("payload, description", [
         (PAYLOAD_WITHOUT_INFO, "Payload without 'info' field"),
         (PAYLOAD_WITHOUT_TAGS, "Payload without 'tags' field"),
@@ -49,6 +52,7 @@ class TestPostMeme:
         with allure.step('Checking status code is 400'):
             post_new_meme.check_status_code(400)
 
+    @pytest.mark.full_test
     @allure.story('Post meme with incorrect authorization token')
     @allure.severity(allure.severity_level.NORMAL)
     def test_post_meme_with_invalid_token(self, post_new_meme):

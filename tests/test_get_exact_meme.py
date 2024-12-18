@@ -5,6 +5,7 @@ import allure
 @allure.feature('Get Exact Meme Feature')
 class TestGetExactMeme:
 
+    @pytest.mark.fast_smoke
     @allure.story('Check that authorized user can get exact meme')
     @allure.severity(allure.severity_level.CRITICAL)
     def test_get_exact_meme_as_authorized_user(self, get_created_meme_id, get_exact_meme):
@@ -15,6 +16,7 @@ class TestGetExactMeme:
         with allure.step('Checking that all fields in response are correct'):
             get_exact_meme.check_all_fields_in_meme_response(get_created_meme_id)
 
+    @pytest.mark.smoke
     @allure.story('Check that unauthorized user can not get exact meme')
     @allure.severity(allure.severity_level.NORMAL)
     def test_get_exact_meme_as_unauthorized_user(self, get_exact_meme):
@@ -23,6 +25,7 @@ class TestGetExactMeme:
         with allure.step('Checking status code is 401'):
             get_exact_meme.check_status_code(401)
 
+    @pytest.mark.smoke
     @pytest.mark.parametrize(
         "incorrect_id",
         [
@@ -39,6 +42,7 @@ class TestGetExactMeme:
         with allure.step('Checking status code is 404'):
             get_exact_meme.check_status_code(404)
 
+    @pytest.mark.full_test
     @allure.story('Getting exact meme with incorrect authorization token')
     @allure.severity(allure.severity_level.NORMAL)
     def test_get_exact_meme_with_invalid_token(self, get_created_meme_id, get_exact_meme):

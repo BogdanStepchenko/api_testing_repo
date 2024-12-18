@@ -5,6 +5,7 @@ import allure
 @allure.feature('Get Authorization Token Feature')
 class TestGetToken:
 
+    @pytest.mark.fast_smoke
     @allure.story('Getting correct token')
     @allure.severity(allure.severity_level.CRITICAL)
     def test_correct_token_alive(self, get_token_endpoint, token):
@@ -13,6 +14,7 @@ class TestGetToken:
         with allure.step('Checking status code is 200'):
             get_token_endpoint.check_status_code(200)
 
+    @pytest.mark.smoke
     @allure.story('Getting correct name in response of correct token')
     @allure.severity(allure.severity_level.CRITICAL)
     def test_correct_name_in_response(self, get_token_endpoint, token, name):
@@ -23,6 +25,7 @@ class TestGetToken:
         with allure.step('Checking status code is 200'):
             get_token_endpoint.check_status_code(200)
 
+    @pytest.mark.full_test
     @pytest.mark.parametrize(
         "invalid_token, expected_status_code",
         [
