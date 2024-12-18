@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   set_env:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: Set Environment
     steps:
       - name: Check out source repository
@@ -44,7 +44,7 @@ jobs:
           sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
 
   run_tests:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: Run Tests with exact severity
     needs: set_env
     steps:
