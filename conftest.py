@@ -23,22 +23,30 @@ def create_new_token(post_token_endpoint):
 
 
 @pytest.fixture(scope='function')
-def create_new_meme_without_deletion(get_authorized_headers, post_new_meme, delete_meme):
+def create_new_meme_without_deletion(post_new_meme, delete_meme):
     payload = CORRECT_PAYLOAD
-    post_new_meme.post_new_meme_as_authorized_user(payload, get_authorized_headers)
+    post_new_meme.post_new_meme_as_authorized_user(payload)
     new_meme = post_new_meme.response_json
     return new_meme
 
 
 @pytest.fixture(scope='function')
-def create_new_meme(get_authorized_headers, post_new_meme, delete_meme):
+def create_new_meme(post_new_meme, delete_meme):
     payload = CORRECT_PAYLOAD
-    post_new_meme.post_new_meme_as_authorized_user(payload, get_authorized_headers)
+    post_new_meme.post_new_meme_as_authorized_user(payload)
     new_meme = post_new_meme.response_json
-    yield new_meme
+
+    token = post_new_meme.session.headers.get('Authorization')
+
+    delete_meme_with_token = DeleteMeme(token)
+
+    assert 'Authorization' in delete_meme_with_token.session.headers, 'Authorization header is missing in delete session'
+
+    yield new_meme, delete_meme_with_token, token
+
     meme_id = new_meme['id']
-    delete_meme.as_authorized_user(meme_id, get_authorized_headers)
-    delete_meme.check_status_code(200)
+    delete_meme_with_token.as_authorized_user(meme_id)
+    delete_meme_with_token.check_status_code(200)
 
 
 @pytest.fixture(scope='function')
@@ -52,28 +60,28 @@ def get_token_endpoint():
 
 
 @pytest.fixture(scope='function')
-def get_all_memes():
-    return GetAllMemes()
+def get_all_memes(token):
+    return GetAllMemes(token)
 
 
 @pytest.fixture(scope='function')
-def get_exact_meme():
-    return GetExactMeme()
+def get_exact_meme(token):
+    return GetExactMeme(token)
 
 
 @pytest.fixture(scope='function')
-def post_new_meme(name):
-    return PostMeme(name)
+def post_new_meme(name, token):
+    return PostMeme(name, token)
 
 
 @pytest.fixture(scope='function')
-def put_existed_meme(name):
-    return PutMeme(name)
+def put_existed_meme(name, token):
+    return PutMeme(name, token)
 
 
 @pytest.fixture(scope='function')
-def delete_meme():
-    return DeleteMeme()
+def delete_meme(token):
+    return DeleteMeme(token)
 
 
 @pytest.fixture(scope='function')
@@ -96,7 +104,8 @@ def get_authorized_headers(token):
 
 @pytest.fixture(scope='function')
 def get_created_meme_id(create_new_meme):
-    return create_new_meme['id']
+    new_meme, _, _ = create_new_meme
+    return new_meme['id']
 
 
 @pytest.fixture(scope='function')

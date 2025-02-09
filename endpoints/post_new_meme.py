@@ -1,21 +1,21 @@
 from json import JSONDecodeError
 
 import pytest
-import requests
 from pydantic import ValidationError
 from endpoints.basic_class import BasicClass
-from data.constants import BASE_URL_MEME, HEADERS
+from data.constants import BASE_URL_MEME
 from models.meme_data import MemeJson
 
 
 class PostMeme(BasicClass):
-    def __init__(self, username):
-        super().__init__()
-        self.response_json = None
+    def __init__(self, username, token=None):
+        super().__init__(token)
         self.username = username
 
-    def post_new_meme_as_authorized_user(self, payload, authorized_headers):
-        self.response = requests.post(BASE_URL_MEME, json=payload, headers=authorized_headers)
+    def post_new_meme_as_authorized_user(self, payload, headers=None):
+        if headers:
+            self.session.headers.update(headers)
+        self.response = self.session.post(BASE_URL_MEME, json=payload)
         if self.response.status_code == 200:
             try:
                 self.response_json = self.response.json()
@@ -29,7 +29,10 @@ class PostMeme(BasicClass):
             self.response_json = None
 
     def post_new_meme_as_unauthorized_user(self, payload):
-        self.response = requests.post(BASE_URL_MEME, json=payload, headers=HEADERS)
+        self.session.headers.pop('Authorization', None)
+
+        self.response = self.session.post(BASE_URL_MEME, json=payload)
+
         assert 'Not authorized' in self.response.text, 'Expected Not authorized message in response'
 
     def check_if_info_is_correct_in_response(self, expected_data):

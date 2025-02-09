@@ -13,11 +13,11 @@ class TestPutMeme:
     @allure.story("Update meme with correct payload as authorized user")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_update_meme_with_correct_payload_as_authorized_user(self, get_created_meme_id,
-                                                                 put_existed_meme, get_authorized_headers):
+                                                                 put_existed_meme):
         correct_payload = generate_correct_payload(get_created_meme_id)
         with allure.step("Update meme with correct payload as authorized user"):
             put_existed_meme.update_meme_as_authorized_user_and_id(get_created_meme_id,
-                                                                   correct_payload, get_authorized_headers)
+                                                                   correct_payload)
         with allure.step("Check status code 200"):
             put_existed_meme.check_status_code(200)
         with allure.step("Check if fields are updated properly"):
@@ -49,21 +49,20 @@ class TestPutMeme:
         (generate_payload_with_incorrect_id, "Payload with incorrect ID")
     ])
     def test_update_meme_with_incorrect_payload_as_authorized_user(self, get_created_meme_id, put_existed_meme,
-                                                                   payload, description, get_authorized_headers):
+                                                                   payload, description):
         incorrect_payload = payload(get_created_meme_id)
         with allure.step(f"Update meme with: {description}"):
             put_existed_meme.update_meme_as_authorized_user_and_id(get_created_meme_id,
-                                                                   incorrect_payload, get_authorized_headers)
+                                                                   incorrect_payload)
         with allure.step("Check status code 400"):
             put_existed_meme.check_status_code(400)
 
     @pytest.mark.full_test
     @allure.story("Attempt to update meme with invalid token")
     @allure.severity(allure.severity_level.NORMAL)
-    def test_update_meme_with_incorrect_token(self, get_created_meme_id, put_existed_meme, get_authorized_headers):
+    def test_update_meme_with_incorrect_token(self, get_created_meme_id, put_existed_meme):
         with allure.step("Creation invalid token"):
             invalid_headers = {"Authorization": "Bearer invalid_token"}
-            put_existed_meme.authorized_headers = invalid_headers
             correct_payload = generate_correct_payload(get_created_meme_id)
         with allure.step("Update meme with invalid token"):
             put_existed_meme.update_meme_as_authorized_user_and_id(get_created_meme_id,
@@ -79,14 +78,11 @@ class TestPutMeme:
         with allure.step('Authorization as another user'):
             another_user_token = post_token_endpoint.create_new_token('AnotherUser')['token']
             another_user_headers = {**get_authorized_headers, 'Authorization': another_user_token}
-            post_new_meme.authorized_headers = another_user_headers
         with allure.step('Create a new meme as another user'):
-            post_new_meme.post_new_meme_as_authorized_user(CORRECT_PAYLOAD, get_authorized_headers)
+            post_new_meme.post_new_meme_as_authorized_user(CORRECT_PAYLOAD, another_user_headers)
             meme_id = post_new_meme.response_json["id"]
         with allure.step('Attempt to update meme as main user'):
-            main_user_token = get_authorized_headers['Authorization']
-            put_existed_meme.authorized_headers = {**get_authorized_headers, 'Authorization': main_user_token}
             correct_payload = generate_correct_payload(meme_id)
-            put_existed_meme.update_meme_as_authorized_user_and_id(meme_id, correct_payload, another_user_headers)
+            put_existed_meme.update_meme_as_authorized_user_and_id(meme_id, correct_payload)
         with allure.step('Check status code 403'):
             put_existed_meme.check_status_code(403)

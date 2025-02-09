@@ -5,9 +5,8 @@ from data.constants import BASE_URL_AUTHORIZE, HEADERS
 
 class GetToken(BasicClass):
 
-    def __init__(self):
-        super().__init__()
-        self.text_response = None
+    def __init__(self, token=None):
+        super().__init__(token)
 
     def check_is_token_valid(self, token):
         self.response = requests.get(f"{BASE_URL_AUTHORIZE}/{token}", headers=HEADERS)

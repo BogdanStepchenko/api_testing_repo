@@ -1,4 +1,3 @@
-import pytest
 import requests
 from endpoints.basic_class import BasicClass
 from data.constants import BASE_URL_AUTHORIZE, HEADERS
@@ -6,8 +5,8 @@ from data.constants import BASE_URL_AUTHORIZE, HEADERS
 
 class PostToken(BasicClass):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, token=None):
+        super().__init__(token)
         self.creation_response = None
         self.created_object = None
 
