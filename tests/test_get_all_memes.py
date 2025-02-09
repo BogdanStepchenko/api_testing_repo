@@ -8,9 +8,9 @@ class TestGetAllMemes:
     @pytest.mark.fast_smoke
     @allure.story('Authorized user can get all memes')
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_get_all_memes_as_authorized_user(self, get_all_memes):
+    def test_get_all_memes_as_authorized_user(self, get_all_memes, get_authorized_headers):
         with allure.step('Checking that authorized user can get all memes'):
-            get_all_memes.check_get_all_memes_with_valid_token()
+            get_all_memes.check_get_all_memes_with_valid_token(get_authorized_headers)
         with allure.step('Checking the status code is 200'):
             get_all_memes.check_status_code(200)
 
@@ -26,9 +26,9 @@ class TestGetAllMemes:
     @pytest.mark.smoke
     @allure.story('Check that all memes have unique IDs')
     @allure.severity(allure.severity_level.NORMAL)
-    def test_all_memes_have_unique_id(self, get_all_memes):
+    def test_all_memes_have_unique_id(self, get_all_memes, get_authorized_headers):
         with allure.step('Getting all memes as an authorized user'):
-            get_all_memes.check_get_all_memes_with_valid_token()
+            get_all_memes.check_get_all_memes_with_valid_token(get_authorized_headers)
         with allure.step('Checking the status code is 200'):
             get_all_memes.check_status_code(200)
         with allure.step('Verifying that all memes have unique IDs'):
@@ -37,9 +37,9 @@ class TestGetAllMemes:
     @pytest.mark.full_test
     @allure.story('Check that all memes have required fields')
     @allure.severity(allure.severity_level.NORMAL)
-    def test_all_memes_have_required_fields(self, get_all_memes):
+    def test_all_memes_have_required_fields(self, get_all_memes, get_authorized_headers):
         with allure.step('Getting all memes as an authorized user'):
-            get_all_memes.check_get_all_memes_with_valid_token()
+            get_all_memes.check_get_all_memes_with_valid_token(get_authorized_headers)
         with allure.step('Checking the status code is 200'):
             get_all_memes.check_status_code(200)
         with allure.step('Verifying that all memes have the required fields'):
@@ -67,6 +67,6 @@ class TestGetAllMemes:
             invalid_headers = {"Authorization": "Bearer invalid_token"}
             get_all_memes.authorized_headers = invalid_headers
         with allure.step('Attempt to get memes with invalid token'):
-            get_all_memes.check_get_all_memes_with_invalid_token()
+            get_all_memes.check_get_all_memes_with_invalid_token(invalid_headers)
         with allure.step('Checking the status code is 401'):
             get_all_memes.check_status_code(401)

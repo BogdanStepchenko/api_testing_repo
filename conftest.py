@@ -25,7 +25,7 @@ def create_new_token(post_token_endpoint):
 @pytest.fixture(scope='function')
 def create_new_meme_without_deletion(get_authorized_headers, post_new_meme, delete_meme):
     payload = CORRECT_PAYLOAD
-    post_new_meme.post_new_meme_as_authorized_user(payload)
+    post_new_meme.post_new_meme_as_authorized_user(payload, get_authorized_headers)
     new_meme = post_new_meme.response_json
     return new_meme
 
@@ -33,11 +33,11 @@ def create_new_meme_without_deletion(get_authorized_headers, post_new_meme, dele
 @pytest.fixture(scope='function')
 def create_new_meme(get_authorized_headers, post_new_meme, delete_meme):
     payload = CORRECT_PAYLOAD
-    post_new_meme.post_new_meme_as_authorized_user(payload)
+    post_new_meme.post_new_meme_as_authorized_user(payload, get_authorized_headers)
     new_meme = post_new_meme.response_json
     yield new_meme
     meme_id = new_meme['id']
-    delete_meme.as_authorized_user(meme_id)
+    delete_meme.as_authorized_user(meme_id, get_authorized_headers)
     delete_meme.check_status_code(200)
 
 
@@ -52,28 +52,28 @@ def get_token_endpoint():
 
 
 @pytest.fixture(scope='function')
-def get_all_memes(get_authorized_headers):
-    return GetAllMemes(get_authorized_headers)
+def get_all_memes():
+    return GetAllMemes()
 
 
 @pytest.fixture(scope='function')
-def get_exact_meme(get_authorized_headers):
-    return GetExactMeme(get_authorized_headers)
+def get_exact_meme():
+    return GetExactMeme()
 
 
 @pytest.fixture(scope='function')
-def post_new_meme(get_authorized_headers, name):
-    return PostMeme(get_authorized_headers, name)
+def post_new_meme(name):
+    return PostMeme(name)
 
 
 @pytest.fixture(scope='function')
-def put_existed_meme(get_authorized_headers, name):
-    return PutMeme(get_authorized_headers, name)
+def put_existed_meme(name):
+    return PutMeme(name)
 
 
 @pytest.fixture(scope='function')
-def delete_meme(get_authorized_headers):
-    return DeleteMeme(get_authorized_headers)
+def delete_meme():
+    return DeleteMeme()
 
 
 @pytest.fixture(scope='function')

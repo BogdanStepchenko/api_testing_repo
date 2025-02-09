@@ -5,13 +5,12 @@ from data.constants import BASE_URL_MEME, HEADERS
 
 class GetAllMemes(BasicClass):
 
-    def __init__(self, authorized_headers):
+    def __init__(self):
         super().__init__()
         self.response_json = None
-        self.authorized_headers = authorized_headers
 
-    def check_get_all_memes_with_valid_token(self):
-        self.response = requests.get(BASE_URL_MEME, headers=self.authorized_headers)
+    def check_get_all_memes_with_valid_token(self, authorized_headers):
+        self.response = requests.get(BASE_URL_MEME, headers=authorized_headers)
         assert self.response.status_code == 200, f"Expected status code 200, but got {self.response.status_code}"
         self.response_json = self.response.json()
         assert isinstance(self.response_json, dict), 'Expected response is dict'
@@ -19,8 +18,8 @@ class GetAllMemes(BasicClass):
         memes = self.response_json['data']
         assert len(memes) > 0, 'Expected at least one meme in list'
 
-    def check_get_all_memes_with_invalid_token(self):
-        self.response = requests.get(BASE_URL_MEME, headers=self.authorized_headers)
+    def check_get_all_memes_with_invalid_token(self, authorized_headers):
+        self.response = requests.get(BASE_URL_MEME, headers=authorized_headers)
         assert self.response.status_code == 401, f"Expected status code 401, but got {self.response.status_code}"
         if self.response.text:
             assert "error" in self.response.text.lower() or "unauthorized" in self.response.text.lower(), \
