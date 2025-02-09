@@ -1,16 +1,14 @@
-import requests
 from endpoints.basic_class import BasicClass
 from data.constants import BASE_URL_MEME, HEADERS
 
 
 class GetAllMemes(BasicClass):
 
-    def __init__(self):
-        super().__init__()
-        self.response_json = None
+    def __init__(self, token=None):
+        super().__init__(token)
 
-    def check_get_all_memes_with_valid_token(self, authorized_headers):
-        self.response = requests.get(BASE_URL_MEME, headers=authorized_headers)
+    def check_get_all_memes_with_valid_token(self):
+        self.response = self.session.get(BASE_URL_MEME)
         assert self.response.status_code == 200, f"Expected status code 200, but got {self.response.status_code}"
         self.response_json = self.response.json()
         assert isinstance(self.response_json, dict), 'Expected response is dict'
@@ -18,8 +16,8 @@ class GetAllMemes(BasicClass):
         memes = self.response_json['data']
         assert len(memes) > 0, 'Expected at least one meme in list'
 
-    def check_get_all_memes_with_invalid_token(self, authorized_headers):
-        self.response = requests.get(BASE_URL_MEME, headers=authorized_headers)
+    def check_get_all_memes_with_invalid_token(self, invalid_headers):
+        self.response = self.session.get(BASE_URL_MEME, headers=invalid_headers)
         assert self.response.status_code == 401, f"Expected status code 401, but got {self.response.status_code}"
         if self.response.text:
             assert "error" in self.response.text.lower() or "unauthorized" in self.response.text.lower(), \
@@ -61,11 +59,13 @@ class GetAllMemes(BasicClass):
         assert len(ids) == len(memes), 'Not all IDs are unique'
 
     def check_get_all_memes_as_unauthorized_user(self):
-        self.response = requests.get(BASE_URL_MEME, headers=HEADERS)
+        self.session.headers.pop('Authorization', None)
+        self.response = self.session.get(BASE_URL_MEME, headers=HEADERS)
         assert 'Not authorized' in self.response.text, 'Expected Not authorized message in response'
 
     def check_get_all_memes_with_authorization_but_without_token(self):
         headers = {**HEADERS, 'Authorization': ""}
-        self.response = requests.get(BASE_URL_MEME, headers=headers)
+        self.session.headers.update(headers)
+        self.response = self.session.get(BASE_URL_MEME, headers=headers)
         assert self.response.status_code == 401, f'Response status code is incorrect: {self.response.status_code}'
         assert 'Not authorized' in self.response.text, 'Expected Not authorized message in response'
