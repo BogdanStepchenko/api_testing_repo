@@ -9,14 +9,13 @@ from models.meme_data import MemeJson
 
 
 class PostMeme(BasicClass):
-    def __init__(self, authorized_headers, username):
+    def __init__(self, username):
         super().__init__()
         self.response_json = None
-        self.authorized_headers = authorized_headers
         self.username = username
 
-    def post_new_meme_as_authorized_user(self, payload):
-        self.response = requests.post(BASE_URL_MEME, json=payload, headers=self.authorized_headers)
+    def post_new_meme_as_authorized_user(self, payload, authorized_headers):
+        self.response = requests.post(BASE_URL_MEME, json=payload, headers=authorized_headers)
         if self.response.status_code == 200:
             try:
                 self.response_json = self.response.json()

@@ -11,9 +11,9 @@ class TestPostMeme:
     @pytest.mark.fast_smoke
     @allure.story('Post meme as authorized user')
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_post_correct_meme_as_authorized_user(self, post_new_meme):
+    def test_post_correct_meme_as_authorized_user(self, post_new_meme, get_authorized_headers):
         with allure.step('Check that possible to post new meme with correct payload'):
-            post_new_meme.post_new_meme_as_authorized_user(CORRECT_PAYLOAD)
+            post_new_meme.post_new_meme_as_authorized_user(CORRECT_PAYLOAD, get_authorized_headers)
         with allure.step('Checking status code is 200'):
             post_new_meme.check_status_code(200)
         with allure.step('Check that response contains all fields which were in payload'):
@@ -46,9 +46,9 @@ class TestPostMeme:
     ])
     @allure.story('Post meme with incorrect payload as authorized user')
     @allure.severity(allure.severity_level.NORMAL)
-    def test_post_incorrect_meme_as_authorized_user(self, post_new_meme, payload, description):
+    def test_post_incorrect_meme_as_authorized_user(self, post_new_meme, payload, description, get_authorized_headers):
         with allure.step('Check that impossible to post new meme with incorrect payload as authorized user'):
-            post_new_meme.post_new_meme_as_authorized_user(payload)
+            post_new_meme.post_new_meme_as_authorized_user(payload, get_authorized_headers)
         with allure.step('Checking status code is 400'):
             post_new_meme.check_status_code(400)
 
@@ -60,6 +60,6 @@ class TestPostMeme:
             invalid_headers = {"Authorization": "Bearer invalid_token"}
             post_new_meme.authorized_headers = invalid_headers
         with allure.step('Check that impossible to post meme with incorrect token'):
-            post_new_meme.post_new_meme_as_authorized_user(CORRECT_PAYLOAD)
+            post_new_meme.post_new_meme_as_authorized_user(CORRECT_PAYLOAD, invalid_headers)
         with allure.step('Checking status code is 401'):
             post_new_meme.check_status_code(401)

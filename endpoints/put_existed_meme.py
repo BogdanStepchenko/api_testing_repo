@@ -9,15 +9,14 @@ from models.meme_data import MemeJson
 
 
 class PutMeme(BasicClass):
-    def __init__(self, authorized_headers, username):
+    def __init__(self, username):
         super().__init__()
         self.response_json = None
-        self.authorized_headers = authorized_headers
         self.username = username
 
-    def update_meme_as_authorized_user_and_id(self, create_new_meme, payload):
+    def update_meme_as_authorized_user_and_id(self, create_new_meme, payload, authorized_headers):
         meme_id = create_new_meme
-        self.response = requests.put(f'{BASE_URL_MEME}/{meme_id}', json=payload, headers=self.authorized_headers)
+        self.response = requests.put(f'{BASE_URL_MEME}/{meme_id}', json=payload, headers=authorized_headers)
         if self.response.status_code == 200:
             try:
                 self.response_json = self.response.json()
