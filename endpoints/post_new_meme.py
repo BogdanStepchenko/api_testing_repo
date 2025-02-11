@@ -30,9 +30,7 @@ class PostMeme(BasicClass):
 
     def post_new_meme_as_unauthorized_user(self, payload):
         self.session.headers.pop('Authorization', None)
-
         self.response = self.session.post(BASE_URL_MEME, json=payload)
-
         assert 'Not authorized' in self.response.text, 'Expected Not authorized message in response'
 
     def check_if_info_is_correct_in_response(self, expected_data):
